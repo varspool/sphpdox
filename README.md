@@ -162,19 +162,28 @@ Here's the built-in help for the `process` command:
 ```
 $./sphpdox.php help process
 Usage:
- process [-o|--output="..."] namespace path
+ process [-o|--output="..."] [-t|--title="..."] [-x|--exclude="..."] namespace path
 
 Arguments:
- namespace     The namespace to process
- path          The path the namespace can be found in
+ namespace      The namespace to process
+ path           The path the namespace can be found in
 
 Options:
- --output (-o) The path to output the ReST files (default: build)
+ --output (-o)  The path to output the ReST files (default: build)
+ --title (-t)   An alternate title for the top level namespace
+ --exclude (-x) Semicolon separated namespaces to ignore
 
 Help:
  The process command works recursively on a directory of PHP code.
+ process [-o|--output="..."] namespace path
 ```
 
 ### Libraries
 
-Sphpdox uses the Symfony Console component, and PHP-Token-Reflection.
+Sphpdox uses the Symfony Console component, and PHP-Token-Reflection. I
+strongly recommend you use composer to install sphpdox, to avoid hunting down
+dependencies.
+
+### License
+
+sphpdox is released under GPL-3.0+
