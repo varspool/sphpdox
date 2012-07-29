@@ -1,2 +1,9 @@
+vendor
+build
 composer.phar
+phpunit
 .*.sw[m-p]
+.buildpath
+.project
+.settings
+
