@@ -46,22 +46,35 @@ class MethodElementTest extends ElementTest
 
     public function testGetParameterInfo()
     {
-        $element = (string)$this->getInstance('publicMethodWithArguments');
+        $element = (string)$this->getInstance('somePublicMethodWithArguments');
         $this->assertStringStartsWith('.. php:method:: ', $element);
         $this->assertRegExp('/^    Some short description$/m', $element, 'short description');
         $this->assertRegExp('/\n    \n    And a longer one here, with line breaks\n    \n/', $element, 'long description line breaks');
         $this->assertRegExp('/And Continuations On Multiple Lines!/', $element, 'continuations');
         $this->assertRegExp('/    :returns: int/', $element, 'return value');
-        $this->assertContains('publicMethodWithArguments(bool $a, int $b, string $c, Exception $d, \Exception $e, Sphpdox\Element\MethodElement $f, boolean $g, $h, Exception $i)', $element, 'formal signature');
+        $this->assertContains('somePublicMethodWithArguments(bool $a, int $b, string $c, Exception $d, \Exception $e, Sphpdox\Element\MethodElement $f, boolean $g, $h, Exception $i, $j = null, $k = self::SOMETHING, Exception $l = null)', $element, 'formal signature');
         $this->assertContains(':param $h:', $element, 'do not specify unknown types');
     }
 
     public function testPrivateMethod()
     {
+        $element = (string)$this->getInstance('somePrivateMethod');
+    }
+
+    public function testPrivateAnnotationMethod()
+    {
+        $element = (string)$this->getInstance('somePrivateAnnotationMethod');
+    }
+
+    public function testProtectedMethod()
+    {
+        $element = (string)$this->getInstance('someProtectedMethod');
     }
 
     // The methods below will be reflected and tested! Pretty meta.
     // Don't edit their
+
+    const SOMETHING = 'foo';
 
     /**
      * Some short description
@@ -71,6 +84,8 @@ class MethodElementTest extends ElementTest
      * And Continuations
      * On Multiple Lines!
      *
+     * @private
+     * @param INVALID!
      * @param bool $a
      * @param int $b
      * @param string $c
@@ -81,8 +96,20 @@ class MethodElementTest extends ElementTest
      * @return int
      * @see Symfony\Component\Console\Command.Command::configure()
      */
-    public function publicMethodWithArguments($a, $b, $c, $d, $e, $f, $g, $h, \Exception $i)
-    {
+    public function somePublicMethodWithArguments(
+        $a,
+        $b,
+        $c,
+        $d,
+        $e,
+        $f,
+        $g,
+        $h,
+        \Exception $i,
+        $j = null,
+        $k = self::SOMETHING,
+        \Exception $l = null
+    ) {
     }
 
     /**
@@ -97,7 +124,7 @@ class MethodElementTest extends ElementTest
      *
      * @private
      */
-    private function somePrivateAnnotationMethod()
+    public function somePrivateAnnotationMethod()
     {
     }
 

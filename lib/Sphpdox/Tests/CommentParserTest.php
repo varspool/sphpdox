@@ -17,9 +17,61 @@ class CommentParserTest extends Test
         $instance = $this->getInstance($comment);
 
         $this->assertInstanceOfClass($instance);
+
+        if ($shortDescription) {
+            $this->assertTrue($instance->hasDescription(), 'has description');
+        }
+
         $this->assertEquals($shortDescription, $instance->getShortDescription(), 'short description');
         $this->assertEquals($longDescription, $instance->getLongDescription(), 'long description');
         $this->assertEquals($annotations, $instance->getAnnotations(), 'annotations');
+    }
+
+    public function testGetAnnotationsByName()
+    {
+        $instance = $this->getInstance('
+            /**
+             * A description
+             *
+             * @foo
+             * @bar
+             * @foo wow amazing really long annotations even.
+             *        that can be split across lines.
+             * @bar
+             * @foo with content
+             *
+             * Some content in between here. Tricky
+             *
+             * @foo more content
+             */
+        ');
+
+        $annotations = $instance->getAnnotationsByName('foo');
+
+        $this->assertCount(4, $annotations, 'correct number of annotations');
+        $this->assertEquals('@foo', $annotations[0], 'blank annotation');
+        $this->assertEquals('@foo wow amazing really long annotations even. that can be split across lines.', $annotations[1], 'blank annotation');
+        $this->assertEquals('@foo with content', $annotations[2], 'blank annotation');
+        $this->assertEquals('@foo more content', $annotations[3], 'blank annotation');
+        $this->assertEquals(array(), $instance->getAnnotationsByName('failron'));
+    }
+
+    public function testHasAnnotation()
+    {
+        $instance = $this->getInstance('
+            /**
+             *
+             * @private
+             *
+             * Some content in between here. Tricky
+             *
+             * @magic And a comment about how it is magic
+             */
+        ');
+
+        $this->assertTrue($instance->hasAnnotation('magic'));
+        $this->assertTrue($instance->hasAnnotation('private'));
+        $this->assertFalse($instance->hasAnnotation('foo'));
     }
 
     public function getValidComments()

@@ -10,11 +10,22 @@ use TokenReflection\IReflectionMethod;
  */
 class MethodElement extends Element
 {
+    /**
+     * Constructor
+     *
+     * @param IReflectionMethod $method
+     */
     public function __construct(IReflectionMethod $method)
     {
-        $this->reflection = $method;
+        parent::__construct($method);
     }
 
+    /**
+     * Gets an array of simplified information about the parameters of this
+     * method
+     *
+     * @return array
+     */
     protected function getParameterInfo()
     {
         $params = array();
@@ -27,7 +38,11 @@ class MethodElement extends Element
             );
 
             if ($parameter->isDefaultValueAvailable()) {
-                $params[$parameter->getName()]['default'] = $parameter->getDefaultValue();
+                try {
+                    $params[$parameter->getName()]['default'] = trim($parameter->getDefaultValueDefinition());
+                } catch (\Exception\RuntimeException $e) {
+                    // Just don't provide a default
+                }
             }
         }
 
@@ -57,6 +72,11 @@ class MethodElement extends Element
         return $params;
     }
 
+    /**
+     * Gets the formal signature/declaration argument list ReST output
+     *
+     * @return string
+     */
     protected function getArguments()
     {
         $strings = array();
@@ -84,6 +104,8 @@ class MethodElement extends Element
     }
 
     /**
+     * Gets an array of parameter information, in ReST format
+     *
      * @return array
      */
     protected function getParameters()
@@ -113,6 +135,11 @@ class MethodElement extends Element
         return $strings;
     }
 
+    /**
+     * Gets the return value ReST notation
+     *
+     * @return boolean|string
+     */
     protected function getReturnValue()
     {
         $annotations = array_filter($this->getParser()->getAnnotations(), function ($v) {
@@ -143,8 +170,17 @@ class MethodElement extends Element
         return false;
     }
 
+    /**
+     * @see \Sphpdox\Element\Element::__toString()
+     */
     public function __toString()
     {
+        try {
+            $arguments = $this->getArguments();
+        } catch (\Exception $e) {
+            $arguments = '';
+        }
+
         $string = sprintf(".. php:method:: %s(%s)\n\n", $this->reflection->getName(), $this->getArguments());
 
         $parser = $this->getParser();
