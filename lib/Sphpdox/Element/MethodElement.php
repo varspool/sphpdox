@@ -94,12 +94,12 @@ class MethodElement extends Element
             $string = ':param ';
 
             if ($parameter['type']) {
-                $string .= $parameter['type'];
+                $string .= $parameter['type'] . ' ';
             } else {
-                $string .= 'unknown';
+                $string .= '';
             }
 
-            $string .= ' $';
+            $string .= '$';
             $string .= $name;
             $string .= ': ';
 
