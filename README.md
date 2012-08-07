@@ -175,7 +175,6 @@ Options:
 
 Help:
  The process command works recursively on a directory of PHP code.
- process [-o|--output="..."] namespace path
 ```
 
 ### Libraries
