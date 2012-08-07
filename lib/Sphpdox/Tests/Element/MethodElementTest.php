@@ -9,9 +9,23 @@ use \Exception;
 
 class MethodElementTest extends ElementTest
 {
+    /**
+     * Reflection broker
+     *
+     * @var TokenReflection\Broker
+     */
     protected $broker;
+
+    /**
+     * Backend
+     *
+     * @var TokenReflection\Broker\Backend\Memory
+     */
     protected $backend;
 
+    /**
+     * @see PHPUnit_Framework_TestCase::setUp()
+     */
     public function setUp()
     {
         $this->backend = new Memory();
@@ -19,6 +33,9 @@ class MethodElementTest extends ElementTest
         $this->broker->processDirectory(__DIR__);
     }
 
+    /**
+     * @see PHPUnit_Framework_TestCase::tearDown()
+     */
     public function tearDown()
     {
         unset($this->backend);
@@ -39,6 +56,9 @@ class MethodElementTest extends ElementTest
         return parent::getInstance($class->getMethod($method));
     }
 
+    /**
+     * @see \Sphpdox\Tests\Test::getClass()
+     */
     public function getClass()
     {
         return 'Sphpdox\Element\MethodElement';
