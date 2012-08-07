@@ -6,9 +6,12 @@
 		</testsuite>
 	</testsuites>
 	<filter>
-		<blacklist>
-			<file>lib/SplClassLoader.php</file>
-		</blacklist>
+		<whitelist>
+			<directory>lib/Sphpdox</directory>
+			<exclude>
+				<directory>lib/Sphpdox/Tests</directory>
+			</exclude>
+		</whitelist>
 	</filter>
 	<logging>
 		<log type="coverage-html" target="build/report" charset="UTF-8"
