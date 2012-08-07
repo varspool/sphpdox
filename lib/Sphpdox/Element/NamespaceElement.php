@@ -103,6 +103,7 @@ class NamespaceElement extends Element
         $template = str_repeat($this->titles[$depth], strlen($title)) . "\n";
         $template .= $title . "\n";
         $template .= str_repeat($this->titles[$depth], strlen($title)) . "\n\n";
+        $template .= $this->getNamespaceElement();
 
         $template .= ".. toctree::\n\n";
 
@@ -122,5 +123,12 @@ class NamespaceElement extends Element
         }
 
         file_put_contents($index, $template);
+    }
+
+    public function getNamespaceElement()
+    {
+        return '.. php:namespace: '
+            . str_replace('\\', '\\\\', $this->reflection->getName())
+            . "\n\n";
     }
 }

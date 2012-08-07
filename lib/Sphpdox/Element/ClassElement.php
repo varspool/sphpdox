@@ -50,10 +50,14 @@ class ClassElement extends Element
     {
         $name = $this->reflection->getName();
 
-        $string = str_repeat('-', strlen($name)) . "\n";
-        $string .= $name . "\n";
-        $string .= str_repeat('-', strlen($name)) . "\n\n";
-        $string .= '.. php:class:: ' . $name;
+        $title = str_replace('\\', '\\\\', $name);
+        //$title = $name;
+
+        $string = str_repeat('-', strlen($title)) . "\n";
+        $string .= $title . "\n";
+        $string .= str_repeat('-', strlen($title)) . "\n\n";
+        $string .= $this->getNamespaceElement();
+        $string .= '.. php:class:: ' . $this->reflection->getShortName();
 
         $parser = $this->getParser();
 
@@ -71,6 +75,10 @@ class ClassElement extends Element
         }
 
         $string .= "\n\n";
+
+        // Finally, fix some whitespace errors
+        $string = preg_replace('/^\s+$/m', '', $string);
+        $string = preg_replace('/ +$/m', '', $string);
 
         return $string;
     }
@@ -105,5 +113,12 @@ class ClassElement extends Element
         return array_map(function ($v) {
             return new MethodElement($v);
         }, $this->reflection->getMethods());
+    }
+
+    public function getNamespaceElement()
+    {
+        return '.. php:namespace: '
+            . str_replace('\\', '\\\\', $this->reflection->getNamespaceName())
+            . "\n\n";
     }
 }

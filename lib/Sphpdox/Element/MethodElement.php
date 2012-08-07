@@ -71,6 +71,9 @@ class MethodElement extends Element
             $string .= '$' . $name;
 
             if (isset($parameter['default'])) {
+                if ($parameter['default'] == '~~NOT RESOLVED~~') {
+                    $parameter['default'] = '';
+                }
                 $string .= ' = ' . $parameter['default'];
             }
 
