@@ -120,8 +120,8 @@ class Process extends Command
         ksort($namespaces);
 
         $excludes = array();
-        if ($input->hasOption('exclude')) {
-            $excludes = explode(';', $input->getOption('exclude'));
+        if (($exclude = trim($input->getOption('exclude')))) {
+            $excludes = explode(';', $exclude);
             foreach ($excludes as $exclude) {
                 $output->writeln(sprintf('<comment>Excluding code from %s</comment>', $exclude));
             }
