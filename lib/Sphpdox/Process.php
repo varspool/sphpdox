@@ -127,8 +127,9 @@ class Process extends Command
             }
         }
 
-        foreach ($namespaces as $n => $reflection)
-        {
+        $filtered = array();
+
+        foreach ($namespaces as $n => $reflection) {
             if (substr($n, 0, strlen($namespace)) != $namespace) continue;
 
             foreach ($excludes as $exclude) {
@@ -137,7 +138,25 @@ class Process extends Command
                 }
             }
 
+            $filtered[$n] = $reflection;
+        }
+
+        unset($namespaces);
+        $elements = array();
+
+        foreach ($filtered as $n => $reflection) {
             $output->writeln(sprintf('<info>Processing %s</info>', $n));
+
+            $element = new NamespaceElement($reflection);
+            $element->buildClasses($out, $output);
+
+            $elements[$n] = $element;
+        }
+
+        unset($filtered);
+
+        foreach ($elements as $n => $element) {
+            $output->writeln(sprintf('<info>Building index for %s</info>', $n));
 
             $options = array();
 
@@ -145,8 +164,7 @@ class Process extends Command
                 $options = array('title' => $input->getOption('title'));
             }
 
-            $element = new NamespaceElement($reflection);
-            $element->build($out, $output, $options);
+            $element->buildIndex($out, $output, $options);
         }
     }
 }

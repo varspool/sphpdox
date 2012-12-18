@@ -33,8 +33,10 @@ class MethodElement extends Element
         $parameters = $this->reflection->getParameters();
         foreach ($parameters as $parameter) {
             $params[$parameter->getName()] = array(
-                'name' => $parameter->getName(),
-                'type' => $parameter->getOriginalTypeHint(),
+                'name'      => $parameter->getName(),
+                'hint_type' => $parameter->getOriginalTypeHint(),
+                'type'      => $parameter->getOriginalTypeHint(),
+                'comment'   => null
             );
 
             if ($parameter->isDefaultValueAvailable()) {
@@ -57,15 +59,17 @@ class MethodElement extends Element
                 continue;
             }
 
-            $type = $parts[1];
-            $name = str_replace('$', '', $parts[2]);
-            $comment = implode(' ', array_slice($parts, 3));
+            $type = trim($parts[1]);
+            $name = trim(str_replace('$', '', $parts[2]));
+            $comment = trim(implode(' ', array_slice($parts, 3)));
 
             if (isset($params[$name])) {
-                if ($params[$name]['type'] == null) {
+                if ($params[$name]['type'] == null && $type) {
                     $params[$name]['type'] = $type;
                 }
-                $params[$name]['comment'] = $comment;
+                if ($comment) {
+                    $params[$name]['comment'] = $comment;
+                }
             }
         }
 
@@ -84,8 +88,8 @@ class MethodElement extends Element
         foreach ($this->getParameterInfo() as $name => $parameter) {
             $string = '';
 
-            if ($parameter['type']) {
-                $string .= $parameter['type'] . ' ';
+            if ($parameter['hint_type']) {
+                $string .= $parameter['hint_type'] . ' ';
             }
 
             $string .= '$' . $name;
@@ -113,23 +117,17 @@ class MethodElement extends Element
         $strings = array();
 
         foreach ($this->getParameterInfo() as $name => $parameter) {
-            $string = ':param ';
-
             if ($parameter['type']) {
-                $string .= $parameter['type'] . ' ';
-            } else {
-                $string .= '';
+                $strings[] = ':type $' . $name . ': ' . $parameter['type'];
             }
 
-            $string .= '$';
-            $string .= $name;
-            $string .= ': ';
+            $string = ':param $' . $name . ':';
 
-            if (isset($parameter['comment'])) {
-                $string .= $parameter['comment'];
+            if (isset($parameter['comment']) && $parameter['comment']) {
+                $string .= ' ' . $parameter['comment'];
             }
 
-            $strings[] = $string;
+             $strings[] = $string;
         }
 
         return $strings;

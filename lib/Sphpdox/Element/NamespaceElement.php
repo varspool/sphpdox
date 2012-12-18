@@ -66,14 +66,15 @@ class NamespaceElement extends Element
     }
 
     /**
-     * @param string $basedir
+     * Ensures the build directory is in place
+     *
+     * @param string $path
      * @param OutputInterface $output
+     * @return string The directory
      */
-    public function build($basedir, OutputInterface $output, array $options = array())
+    protected function ensureBuildDir($path, OutputInterface $output)
     {
-        $path = $basedir;
         $parts = explode(DIRECTORY_SEPARATOR, $this->getPath());
-        $target = $basedir . DIRECTORY_SEPARATOR . $this->getPath();
 
         foreach ($parts as $part) {
             if (!$part) continue;
@@ -86,9 +87,30 @@ class NamespaceElement extends Element
             }
         }
 
+        return $path;
+    }
+
+    /**
+     * Builds the class information
+     *
+     * @param unknown $basedir
+     * @param OutputInterface $output
+     */
+    public function buildClasses($basedir, OutputInterface $output)
+    {
+        $target = $this->ensureBuildDir($basedir, $output);
+
         foreach ($this->getClasses() as $element) {
             $element->build($target, $output);
         }
+    }
+
+    /**
+     * Builds the index file
+     */
+    public function buildIndex($basedir, OutputInterface $output, array $options = array())
+    {
+        $target = $this->ensureBuildDir($basedir, $output);
 
         $built_iterator = new DirectoryIterator($target);
         $index = $target . DIRECTORY_SEPARATOR . 'index.rst';
