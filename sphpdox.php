@@ -1,9 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-if (is_readable('vendor/autoload.php')) {
-    require 'vendor/autoload.php';
-}
+require __DIR__ . '/vendor/autoload.php';
 
 use Sphpdox\Process;
 use Symfony\Component\Console\Shell;
