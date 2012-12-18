@@ -72,7 +72,7 @@ class MethodElementTest extends ElementTest
         $this->assertRegExp('/\n    \n    And a longer one here, with line breaks\n    \n/', $element, 'long description line breaks');
         $this->assertRegExp('/And Continuations On Multiple Lines!/', $element, 'continuations');
         $this->assertRegExp('/    :returns: int/', $element, 'return value');
-        $this->assertContains('somePublicMethodWithArguments(bool $a, int $b, string $c, Exception $d, \Exception $e, Sphpdox\Element\MethodElement $f, boolean $g, $h, Exception $i, $j = null, $k = self::SOMETHING, Exception $l = null)', $element, 'formal signature');
+        $this->assertContains('somePublicMethodWithArguments($a, $b, $c, $d, $e, $f, $g, $h, Exception $i, $j = null, $k = self::SOMETHING, Exception $l = null)', $element, 'formal signature');
         $this->assertContains(':param $h:', $element, 'do not specify unknown types');
     }
 
