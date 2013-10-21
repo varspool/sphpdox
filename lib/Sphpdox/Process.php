@@ -28,6 +28,7 @@ class Process extends Command
         $definition->addOption(new InputOption('output', 'o', InputOption::VALUE_REQUIRED, 'The path to output the ReST files', 'build'));
         $definition->addOption(new InputOption('title', 't', InputOption::VALUE_REQUIRED, 'An alternate title for the top level namespace', null));
         $definition->addOption(new InputOption('exclude', 'x', InputOption::VALUE_REQUIRED, 'Semicolon separated namespaces to ignore', null));
+        $definition->addOption(new InputOption('filters', 'f', InputOption::VALUE_REQUIRED, 'Semicolon separated filename filters to apply', null));
 
         $this
             ->setName('process')
@@ -113,8 +114,16 @@ class Process extends Command
 
         $output_files = array();
 
+        $filters = array();
+        if (($filtersArgument = trim($input->getOption('filters')))) {
+            $filters = explode(';', $filtersArgument);
+            foreach ($filters as $filter) {
+                $output->writeln(sprintf('<comment>Applying filter %s</comment>', $filter));
+            }
+        }
+        var_dump($filters);
         $broker = new Broker($backend = new Memory());
-        $broker->processDirectory($path);
+        $broker->processDirectory($path, $filters);
 
         $namespaces = $backend->getNamespaces();
         ksort($namespaces);
