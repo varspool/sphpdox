@@ -121,7 +121,7 @@ class Process extends Command
                 $output->writeln(sprintf('<comment>Applying filter %s</comment>', $filter));
             }
         }
-        var_dump($filters);
+        
         $broker = new Broker($backend = new Memory());
         $broker->processDirectory($path, $filters);
 
