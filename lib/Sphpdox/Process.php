@@ -105,6 +105,7 @@ class Process extends Command
             });
 
             $out = $helper->ask($input, $output, $question);
+            $input->setOption('output', $out);
         }
     }
 
