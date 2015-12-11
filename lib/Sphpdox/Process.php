@@ -47,7 +47,7 @@ class Process extends Command
             /** @var QuestionHelper $helper */
             $helper = $this->getHelper('question');
 
-            $question = new Question('Namespace of code to document:');
+            $question = new Question('Namespace of code to document: ');
             $question->setValidator(function($namespace) {
                 $namespace = trim($namespace);
 
