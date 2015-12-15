@@ -4,7 +4,8 @@ namespace Sphpdox;
 
 use Sphpdox\Element\NamespaceElement;
 
-use Sphpdox\Element\Element;
+use Symfony\Component\Console\Helper\QuestionHelper;
+use Symfony\Component\Console\Question\Question;
 use TokenReflection\Broker;
 use TokenReflection\Broker\Backend\Memory;
 use Symfony\Component\Console\Command\Command;
@@ -43,39 +44,45 @@ class Process extends Command
     protected function interact(InputInterface $input, OutputInterface $output)
     {
         if (!$input->getArgument('namespace')) {
-            $n = $this->getHelper('dialog')->askAndValidate(
-                $output,
-                '<question>Namespace of code to document: </question> ',
-                function ($namespace) {
-                    $namespace = trim($namespace);
+            /** @var QuestionHelper $helper */
+            $helper = $this->getHelper('question');
 
-                    if (!$namespace) {
-                        throw new InvalidArgumentException('Invalid namespace');
-                    }
+            $question = new Question('Namespace of code to document: ');
+            $question->setValidator(function($namespace) {
+                $namespace = trim($namespace);
 
-                    return $namespace;
+                if (!$namespace) {
+                    throw new InvalidArgumentException('Invalid namespace');
                 }
-            );
-            $input->setArgument('namespace', $n);
+
+                return $namespace;
+            });
+
+            $namespace = $helper->ask($input, $output, $question);
+
+            $input->setArgument('namespace', $namespace);
         }
 
         $path = $input->getArgument('path');
 
         if (!$path || !is_readable($path)) {
-            $p = $this->getHelper('dialog')->askAndValidate(
-                $output,
-                '<question>Path to namespace: </question> ',
-                function ($path) {
-                    $path = trim($path);
+            /** @var QuestionHelper $helper */
+            $helper = $this->getHelper('question');
 
-                    if (!$path || !is_readable($path) || !is_dir($path)) {
-                        throw new InvalidArgumentException('Invalid path to namespace source');
-                    }
+            $question = new Question('Path to namespace: ');
+            $question->setValidator(function ($path) {
+                $path = trim($path);
 
-                    return $path;
+                if (!$path || !is_readable($path) || !is_dir($path)) {
+                    throw new InvalidArgumentException('Invalid path to namespace source');
                 }
-            );
-            $input->setArgument('path', $p);
+
+                return $path;
+            });
+
+            $path = $helper->ask($input, $output, $question);
+
+            $input->setArgument('path', $path);
         }
 
         $out = $input->getOption('output');
@@ -85,17 +92,20 @@ class Process extends Command
         }
 
         if (!is_writable($out)) {
-            $o = $this->getHelper('dialog')->askAndValidate(
-                $output,
-                '<question>Path to output built files: </question> [<comment>' . $out. '</comment>]',
-                function ($out) {
-                     $out = trim($out);
+            /** @var QuestionHelper $helper */
+            $helper = $this->getHelper('question');
 
-                     if (!$out || !is_writable($out)) {
-                         throw new \InvalidArgumentException('Invalid output path');
-                     }
+            $question = new Question(sprintf('Path to output built files [%s]: ', $out));
+            $question->setValidator(function ($out) {
+                $out = trim($out);
+
+                if (!$out || !is_writable($out)) {
+                    throw new \InvalidArgumentException('Invalid output path');
                 }
-            );
+            });
+
+            $out = $helper->ask($input, $output, $question);
+            $input->setOption('output', $out);
         }
     }
 
@@ -121,7 +131,7 @@ class Process extends Command
                 $output->writeln(sprintf('<comment>Applying filter %s</comment>', $filter));
             }
         }
-        
+
         $broker = new Broker($backend = new Memory());
         $broker->processDirectory($path, $filters);
 
