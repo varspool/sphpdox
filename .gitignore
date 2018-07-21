@@ -6,4 +6,5 @@ phpunit
 .buildpath
 .project
 .settings
+composer.lock
 
