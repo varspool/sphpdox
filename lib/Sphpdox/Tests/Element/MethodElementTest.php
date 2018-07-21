@@ -2,6 +2,7 @@
 
 namespace Sphpdox\Tests\Element;
 
+use InvalidArgumentException;
 use Sphpdox\Element\MethodElement;
 use TokenReflection\Broker;
 use TokenReflection\Broker\Backend\Memory;
@@ -12,14 +13,14 @@ class MethodElementTest extends ElementTest
     /**
      * Reflection broker
      *
-     * @var TokenReflection\Broker
+     * @var \TokenReflection\Broker
      */
     protected $broker;
 
     /**
      * Backend
      *
-     * @var TokenReflection\Broker\Backend\Memory
+     * @var \TokenReflection\Broker\Backend\Memory
      */
     protected $backend;
 
@@ -79,16 +80,19 @@ class MethodElementTest extends ElementTest
     public function testPrivateMethod()
     {
         $element = (string)$this->getInstance('somePrivateMethod');
+        $this->assertNotEmpty($element);
     }
 
     public function testPrivateAnnotationMethod()
     {
         $element = (string)$this->getInstance('somePrivateAnnotationMethod');
+        $this->assertNotEmpty($element);
     }
 
     public function testProtectedMethod()
     {
         $element = (string)$this->getInstance('someProtectedMethod');
+        $this->assertNotEmpty($element);
     }
 
     // The methods below will be reflected and tested! Pretty meta.
@@ -111,10 +115,10 @@ class MethodElementTest extends ElementTest
      * @param string $c
      * @param Exception $d
      * @param \Exception $e
-     * @param Sphpdox\Element\MethodElement $f
+     * @param \Sphpdox\Element\MethodElement $f
      * @param boolean $g
      * @return int
-     * @see Symfony\Component\Console\Command.Command::configure()
+     * @see \Symfony\Component\Console\Command.Command::configure()
      */
     public function somePublicMethodWithArguments(
         $a,
